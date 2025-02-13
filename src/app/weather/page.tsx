@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import {useRouter} from 'next/navigation'; // for navigation back to the home page
 
 export default function Home() {
      // State variables to store user input, weather data, loading status, and errors
@@ -53,14 +54,19 @@ export default function Home() {
     }
   };
 
+  const router = useRouter(); // Initialize the router object for navigation
+
   return (
     <div className='p-4  flex flex-col items-center justify-center h-screen max-w-96 mx-auto'>
+      <button onClick={() => router.back()} className="p-2 bg-gray-500 text-white rounded mb-4">
+        Go Back
+      </button>
       <h1 className='text-2xl font-bold mb-4 '>Weather App</h1>
-      <p>city and country code</p>
+     
        {/* Input field to enter the city name */}
       <input
         type='text'
-        placeholder='Enter city'
+        placeholder='Enter city and country code (e.g., London, UK)'
         value={city}
         onChange={(e) => setCity(e.target.value)}
         className='border p-2 w-full mb-2 text-black'

@@ -1,7 +1,8 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Link from "next/link";
 
 export default function Home() {
   // Define the structure of a post
@@ -16,7 +17,10 @@ export default function Home() {
   const [data, setData] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [newPost, setNewPost] = useState<{ title: string; body: string }>({ title: '', body: '' });
+  const [newPost, setNewPost] = useState<{ title: string; body: string }>({
+    title: "",
+    body: "",
+  });
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [postId, setPostId] = useState<number | null>(null);
 
@@ -24,13 +28,17 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://jsonplaceholder.typicode.com/posts/${Math.floor(Math.random() * 100) + 1}`);
+        const response = await axios.get(
+          `https://jsonplaceholder.typicode.com/posts/${
+            Math.floor(Math.random() * 100) + 1
+          }`
+        );
         setData(response.data); // Store fetched data in state
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('An unknown error occurred');
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false); // Stop loading once request is complete
@@ -43,52 +51,85 @@ export default function Home() {
   // Handle form submission to create a new post
   const handlePostSubmit = async () => {
     try {
-      const response = await axios.post('https://jsonplaceholder.typicode.com/posts', newPost, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const response = await axios.post(
+        "https://jsonplaceholder.typicode.com/posts",
+        newPost,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       setResponseMessage(`Post created with ID: ${response.data.id}`); // Display response message
       setPostId(response.data.id); // Update postId to trigger a new fetch
-      setNewPost({ title: '', body: '' }); // Clear input fields after submission
+      setNewPost({ title: "", body: "" }); // Clear input fields after submission
     } catch (err) {
-      setResponseMessage(`Error: ${err instanceof Error ? err.message : 'An unknown error occurred'}`);
+      setResponseMessage(
+        `Error: ${
+          err instanceof Error ? err.message : "An unknown error occurred"
+        }`
+      );
     }
   };
 
   // Display loading or error messages if applicable
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="flex justify-center mt-10">Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      {/* Display fetched post data */}
-      {data ? (
-        <>
-          <h1 className='font-extrabold'>{data.title}</h1>
-          <p>{data.body}</p>
-        </>
-      ) : (
-        <p>No data available</p>
-      )}
+      <div className="flex justify-center flex-col items-center p-4">
+        {/* Display fetched post data */}
+        {data ? (
+          <>
+            <h1 className="font-extrabold">{data.title}</h1>
+            <p>{data.body}</p>
+          </>
+        ) : (
+          <p>No data available</p>
+        )}
 
-      {/* Form to create a new post */}
-      <h2 className='mt-4 font-bold'>Create a New Post</h2>
-      <input 
-        type="text" 
-        placeholder="Title" 
-        value={newPost.title} 
-        onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} 
-        className='border p-2 w-full text-black'
-      />
-      <textarea 
-        placeholder="Body" 
-        value={newPost.body} 
-        onChange={(e) => setNewPost({ ...newPost, body: e.target.value })} 
-        className='border p-2 w-full mt-2 text-black'
-      />
-      <button onClick={handlePostSubmit} className='mt-2 p-2 bg-blue-500 text-white rounded'>Submit</button>
+        {/* Form to create a new post */}
+        <h2 className="mt-4 font-bold">Create a New Post</h2>
+        <input
+          type="text"
+          placeholder="Title"
+          value={newPost.title}
+          onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+          className="border p-2 w-full text-black max-w-md mt-2"
+        />
+        <textarea
+          placeholder="Body"
+          value={newPost.body}
+          onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+          className="border p-2 w-full mt-2 text-black max-w-md mt-2"
+        />
+        <button
+          onClick={handlePostSubmit}
+          className="mt-2 p-2 bg-blue-500 text-white rounded"
+        >
+          Submit
+        </button>
 
-      {/* Display response message after submitting a post */}
-      {responseMessage && <p className='mt-2 text-green-600'>{responseMessage}</p>}
+        {/* Display response message after submitting a post */}
+        {responseMessage && (
+          <p className="mt-2 text-green-600">{responseMessage}</p>
+        )}
+      </div>
+        <hr></hr>
+      <div>
+        <h3 className="mt-4 mb-4 font-bold text-center">Test the Weather App</h3>
+
+        {/* Button linking to weather page */}
+
+        {/* this button also works */}
+        {/* <button className='mt-2 p-2 bg-blue-500 text-white rounded' onClick={() => window.location.href = '/weather'}>Go to Weather Page</button> */}
+        <div className="flex justify-center">
+          <Link href="/weather">
+            <button className="p-2 bg-blue-500 text-white rounded ">
+              Go to Weather
+            </button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
